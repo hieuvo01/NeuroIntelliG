@@ -82,14 +82,14 @@ export default function FormDetailFeed() {
                   style={{ pointerEvents: "none" }}
                   src={dataFeed?.image}
                   alt="Nature image"
-                  className="object-cover h-auto w-2/3 rounded-lg"
+                  className=" hover:scale-110  object-cover h-auto w-2/3 rounded-lg"
                 />
                 <CardContent className="p-6">
                   <h1 className="mt-2 text-center text-gray-500 dark:text-gray-400 text-3xl font-bold mb-2">
                     {dataFeed?.title}
                   </h1>
                   <blockquote className="p-4 my-4 border-s-4 border-gray-300 bg-gray-50 dark:border-gray-500 dark:bg-gray-800">
-                    <p className="line-clamp-6 text-ellipsis overflow-hidden ... text-xl italic font-medium leading-relaxed text-gray-900 dark:text-white">
+                    <p className="text-center line-clamp-6 text-ellipsis overflow-hidden ... text-xl italic font-medium leading-relaxed text-gray-900 dark:text-white">
                       {dataFeed?.description}
                     </p>
                   </blockquote>

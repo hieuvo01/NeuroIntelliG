@@ -13,7 +13,7 @@ route.post("/create", async (req, res) => {
     console.log(process.env.JWT_SECRET);
     const user = jwt.decode(token, process.env.JWT_SECRET);
     if (!user) {
-      return res.status(401).json({ message: "Login first" });
+      return res.status(401).json({ message: "Login is required" });
     }
     console.log(req.body);
     const { details, data, status, feedId } = req.body;
@@ -24,7 +24,7 @@ route.post("/create", async (req, res) => {
       userId: user._id,
       info: {
         details,
-        data
+        data,
       },
       status,
       feedId,
@@ -42,7 +42,7 @@ route.get("/search", async (req, res, next) => {
   try {
     const query = {};
     if (req.query.feedId) {
-      query.feedId = req.query.feedId
+      query.feedId = req.query.feedId;
     }
     if (req.query.userId) {
       query.userId = req.query.userId;

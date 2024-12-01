@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-sync-scripts */
+//
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 // import type { Metadata } from "next";
@@ -8,10 +8,6 @@ import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/ui/themeprovider";
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import DisableF12 from "@/components/disableF12";
-import { usePathname } from "next/navigation";
-
-// import { Metadata } from "next";
 
 // export const metadata: Metadata = {
 //   title: "Neuro Vision",
@@ -24,13 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<Record<string, any>>();
-
-  //khong cho trang admin dung lai header chung
-  const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
   const handleLoadUser = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       if (token) {
         const response = await axios.get(
@@ -38,8 +32,12 @@ export default function RootLayout({
         );
         setUser(response.data);
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -48,21 +46,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <DisableF12 />
-        <UserContext.Provider value={user as any}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {/* kiem tra neu la trang admin thi khong su dung header  */}
-            {!isAdmin && <Header />}
-            {/* <Header /> */}
-            {children}
-            <Footer />
-          </ThemeProvider>
-        </UserContext.Provider>
+        {!loading && (
+          <UserContext.Provider value={user as any}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </UserContext.Provider>
+        )}
       </body>
     </html>
   );

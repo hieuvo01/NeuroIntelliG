@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
   //search
   const [keyword, setKeyword] = useState("");
+  // console.log(currentUser);
 
   const downloadImage = async (dataFeed: any) => {
     if (dataFeed?.price > 0) {
@@ -43,11 +45,7 @@ function HomePage() {
         }, 2000);
         return;
       }
-      if (
-        dataFeed?.user_id !== currentUser?._id ||
-        dataFeed?.earning?.status !== "COMPLETED" ||
-        dataFeed?.earning?.userId?.toString() !== currentUser?._id?.toString()
-      ) {
+      if (dataFeed?.earning?.status !== "COMPLETED") {
         // await toast("You are being directed to the payment process. Please wait ...!", {
         //   position: "bottom-right",
         //   autoClose: 2000,
@@ -120,6 +118,19 @@ function HomePage() {
             <div className="absolute inset-0 bg-black/50" />
           </div>
           <div className="container relative mx-auto px-4 py-24">
+            {/* video background  */}
+            {/* <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source
+                src="/client/app/static_components/J.Fla - Feliz Navidad.mp4"
+                type="video/mp4"
+              />
+            </video> */}
             <div className="mx-auto max-w-3xl text-center text-white">
               <h1 className="mb-8 text-4xl font-bold">
                 The best stock photos, royalty free images & videos shared by
@@ -231,94 +242,96 @@ function HomePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {data &&
-                data?.map((i: any) => (
-                  <div
-                    key={i?._id}
-                    className="relative aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden group"
-                  >
-                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Badge
-                        style={{
-                          padding: "0.5rem 1.0rem",
-                          fontSize: "0.8rem",
-                          fontWeight: "bold",
-                          backgroundColor: "rgb(220 18 62 / 78%)",
-                          color: "white",
-                          borderRadius: "0.5rem",
-                          position: "absolute",
-                          left: "-444%",
-                        }}
-                        className=""
-                        variant="outline"
-                      >
-                        {i?.price > 0 ? (
-                          <p className="text-lg ">${i?.price}</p>
-                        ) : (
-                          <p className="text-lg text-green-400 font-bold">
-                            FREE ⭐
-                          </p>
-                        )}
-                      </Badge>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        className="rounded-full bg-cyan-400 hover:bg-cyan-600"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="size-6"
+                data?.map((i: any) => {
+                  return (
+                    <div
+                      key={i?._id}
+                      className="relative aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden group"
+                    >
+                      <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Badge
+                          style={{
+                            padding: "0.5rem 1.0rem",
+                            fontSize: "0.8rem",
+                            fontWeight: "bold",
+                            backgroundColor: "rgb(220 18 62 / 78%)",
+                            color: "white",
+                            borderRadius: "0.5rem",
+                            position: "absolute",
+                            left: "-444%",
+                          }}
+                          className=""
+                          variant="outline"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                          />
-                        </svg>
-                      </Button>
-                      <Button
-                        onClick={() => downloadImage(i)}
-                        size="icon"
-                        variant="secondary"
-                        className="rounded-full  bg-cyan-400 hover:bg-cyan-600"
-                      >
-                        {/* <a href={i?.image} download> */}
-                        <Download className="h-4 w-4" />
-                        <span className="sr-only">Download</span>
-                        {/* </a> */}
-                      </Button>
+                          {i?.price > 0 ? (
+                            <p className="text-lg ">${i?.price}</p>
+                          ) : (
+                            <p className="text-lg text-green-400 font-bold">
+                              FREE ⭐
+                            </p>
+                          )}
+                        </Badge>
+                        <Button
+                          size="icon"
+                          variant="secondary"
+                          className="rounded-full bg-cyan-400 hover:bg-cyan-600"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="size-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                            />
+                          </svg>
+                        </Button>
+                        <Button
+                          onClick={() => downloadImage(i)}
+                          size="icon"
+                          variant="secondary"
+                          className="rounded-full  bg-cyan-400 hover:bg-cyan-600"
+                        >
+                          {/* <a href={i?.image} download> */}
+                          <Download className="h-4 w-4" />
+                          <span className="sr-only">Download</span>
+                          {/* </a> */}
+                        </Button>
+                      </div>
+                      <img
+                        style={{ pointerEvents: "none" }} //block chuot phai
+                        src={i?.image}
+                        alt={i?.image}
+                        className="transition ease-linear w-full h-auto object-cover rounded-lg hover:scale-110"
+                      />
+                      <div className="absolute bottom-0 px-4 py-2 text-sm text-primary">
+                        <p
+                          className=" uppercase bg-transparent text-blue-500 text-2xl font-bold font-mono"
+                          style={{
+                            textShadow:
+                              "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+                          }}
+                        >
+                          {i?.title}
+                        </p>
+                        <p
+                          className="text-justify shadow-slate-950 line-clamp-3 text-ellipsis overflow-hidden ... text-black  "
+                          style={{
+                            textShadow:
+                              "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+                          }}
+                        >
+                          {i?.description}
+                        </p>
+                      </div>
                     </div>
-                    <img
-                      style={{ pointerEvents: "none" }}
-                      src={i?.image}
-                      alt={i?.image}
-                      className="w-full h-auto object-cover rounded-lg "
-                    />
-                    <div className="absolute bottom-0 px-4 py-2 text-sm text-primary">
-                      <p
-                        className="uppercase bg-transparent text-lime-500 text-3xl font-bold font-mono"
-                        style={{
-                          textShadow:
-                            "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
-                        }}
-                      >
-                        {i?.title}
-                      </p>
-                      <p
-                        className="shadow-slate-950 line-clamp-3 text-ellipsis overflow-hidden ... text-red-400"
-                        style={{
-                          textShadow:
-                            "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
-                        }}
-                      >
-                        {i?.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           )}
         </section>

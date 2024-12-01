@@ -130,7 +130,7 @@ route.get("/search", async (req, res, next) => {
     if (req.query.type) {
       query.type = req.query.type;
     }
-    console.log(query);
+    // console.log(query);
     // Fetch feeds based on the query
     const feeds = await FeedsSchema.find(query).sort({ createdAt: -1 });
 

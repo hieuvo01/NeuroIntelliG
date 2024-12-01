@@ -164,6 +164,10 @@ const AIGeneratedContent = () => {
                 required
               />
             </div>
+            <p className="font-mono text-xs">
+              Please wait about 3 - 5 seconds after entering the text then click
+              the button.
+            </p>
             <Button onClick={handleAIGenerationText} disabled={isLoading}>
               {isLoading ? "Generating Suggestions..." : "Get AI Suggestions"}
             </Button>

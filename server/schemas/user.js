@@ -23,6 +23,10 @@ const User = new Schema({
   phone_number: {
     type: String,
   },
+  role: {
+    type: String,
+    default: "user",
+  },
   isVerified: {
     type: Boolean,
     default: false,
