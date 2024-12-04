@@ -22,7 +22,7 @@ function useSpeechToText(options: any) {
     if('webkitSpeechGrammarList' in cloneWindow) {
       const grammar = '#JSGF V1.0; grammar punctuation; public <punc> = . | , | ? | ! | ; | : ;'
       const speechRecognitionList = new cloneWindow.webkitSpeechGrammarList();
-      speechRecognitionList.addFromString(grammar, 'public');
+      speechRecognitionList.addFromString(grammar, 1);
       recognition.grammars = speechRecognitionList;
     };
 
