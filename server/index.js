@@ -5,19 +5,28 @@ import * as dotenv from "dotenv";
 import userRoutes from "./routes/user.js";
 import feedRoutes from "./routes/feeds.js";
 import earningRoutes from "./routes/earning.js";
+import multer from "multer";
+
+const upload = multer({ dest: "uploads/" });
 dotenv.config();
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Cho phép client chạy trên cổng 3000
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/feeds", feedRoutes);
 app.use("/api/earning", earningRoutes);
-app.use('/', (req, res, next) => {
+app.use("/", (req, res, next) => {
   res.status(404).json({ message: "Page not found" });
   next();
-})
+});
 
 // Connect to MongoDB
 const startServer = async () => {

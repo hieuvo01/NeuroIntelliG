@@ -4,16 +4,23 @@ const route = express.Router();
 import dotenv from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
 import FeedsSchema from "../schemas/feeds.js";
+import Tesseract from "tesseract.js";
 import jwt from "jsonwebtoken";
+import fs from "fs"; // Đảm bảo import fs
 import EarningSchema from "../schemas/earning.js";
+import multer from "multer";
+import axios from "axios";
 dotenv.config();
 
-// Configuration
-// cloudinary.config({
-//   cloud_name: process.env.CLOUD_APP_NAME,
-//   api_key: process.env.CLOUD_API_KEY,
-//   api_secret: process.env.CLOUD_API_KEY_SECRET, // Click 'View API Keys' above to copy your API secret
-// });
+const customApi = axios.create({
+  baseURL: "https://api.yescale.io/v1", // Thay bằng endpoint đúng của nhà cung cấp khác
+  headers: {
+    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // API Key của nhà cung cấp đó
+    "Content-Type": "application/json",
+  },
+});
+// Cấu hình multer để lưu file tạm
+const upload = multer({ dest: "uploads/" });
 
 // ham tao feed (image)
 route.post("/create", async (req, res, next) => {
@@ -183,6 +190,60 @@ route.get("/:id/details", async (req, res, next) => {
   }
 });
 
+// Gửi yêu cầu đến endpoint tùy chỉnh
+async function analyzeTextWithCustomAPI(text) {
+  try {
+    const response = await customApi.post("/chat/completions", {
+      model: "gpt-4", // Tùy thuộc vào nhà cung cấp khác
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an assistant trained to analyze extracted text from images.",
+        },
+        { role: "user", content: `Analyze the following text: ${text}` },
+      ],
+    });
+
+    const analysis = response.data.choices[0].message.content;
+    console.log("API Analysis:", analysis);
+    // Trả về kết quả phân tích
+    return analysis;
+  } catch (error) {
+    console.error("Error analyzing text with custom API:", error);
+    throw new Error(`Failed to analyze text with custom API: ${error.message}`);
+  }
+}
+
+// Route phân tích ảnh
+route.post("/analyze-image", upload.single("image"), async (req, res) => {
+  const imagePath = req.file.path;
+
+  try {
+    // Sử dụng Tesseract.js để nhận diện văn bản từ ảnh
+    const {
+      data: { text },
+    } = await Tesseract.recognize(imagePath, "eng", {
+      logger: (m) => console.log(m), // Giám sát tiến trình
+    });
+
+    console.log("Extracted text:", text);
+
+    if (!text || text.trim().length === 0) {
+      res.status(400).json({ error: "No text extracted from image" });
+      return;
+    }
+
+    // Gửi văn bản đến OpenAI để phân tích
+    const analysis = await analyzeTextWithCustomAPI(text);
+
+    // Trả về kết quả phân tích
+    res.json({ text: analysis });
+  } catch (error) {
+    console.error("Error analyzing image:", error);
+    res.status(500).json({ error: error.message || "Error analyzing image" });
+  }
+});
 // route mac dinh
 route.get("/", (req, res) => {
   res.send("hello world");

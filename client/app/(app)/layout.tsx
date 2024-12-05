@@ -8,6 +8,8 @@ import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/ui/themeprovider";
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { usePathname } from "next/navigation";
+import DisableF12 from "@/components/disableF12";
 
 // export const metadata: Metadata = {
 //   title: "Neuro Vision",
@@ -22,6 +24,9 @@ export default function RootLayout({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<Record<string, any>>();
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
+
   const handleLoadUser = async () => {
     try {
       setLoading(true);
@@ -43,6 +48,9 @@ export default function RootLayout({
   useEffect(() => {
     handleLoadUser();
   }, []);
+  //chan F12 va chuot phai
+  DisableF12();
+
   return (
     <html lang="en">
       <body>
@@ -54,7 +62,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Header />
+              {!isAdmin && <Header />}
               {children}
               <Footer />
             </ThemeProvider>
