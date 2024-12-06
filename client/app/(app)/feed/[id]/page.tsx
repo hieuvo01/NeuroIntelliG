@@ -69,16 +69,6 @@ export default function FormDetailFeed() {
           <main className="container mx-auto px-4 py-8">
             <Card className="overflow-hidden">
               <div className="relative aspect-[16/9] w-full flex">
-                {/* <figure className="w-9/12">
-                  <img
-                    className="h-auto max-w-full rounded-lg"
-                    src={dataFeed?.image}
-                    alt="image description"
-                  />
-                  <figcaption className="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">
-                    {dataFeed?.title || "Untitled Image"}
-                  </figcaption>
-                </figure> */}
                 <img
                   style={{ pointerEvents: "none" }}
                   src={dataFeed?.image}

@@ -25,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
+import ChatBubble from "./chatbot/page";
 
 function HomePage() {
   const route = useRouter();
@@ -113,48 +114,61 @@ function HomePage() {
     <div>
       <main>
         <section className="relative">
-          <div className="absolute inset-0">
-            <div className="h-full w-full bg-[url('/placeholder.svg')] bg-cover bg-center" />
-            <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute bg-[url('https://st4.depositphotos.com/4867809/22604/i/450/depositphotos_226043500-stock-photo-green-christmas-tree-red-decorations.jpg')] bg-transparent  bg-center inset-0 p-8 rounded-lg shadow-lg ">
+            {" "}
+            <div className=" h-full w-full " />
+            {/* <div className="absolute inset-0 bg-black/50" /> */}
           </div>
-          <div className="container relative mx-auto px-4 py-24">
-            {/* video background  */}
-            {/* <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-            >
-              <source
-                src="/client/app/static_components/J.Fla - Feliz Navidad.mp4"
-                type="video/mp4"
-              />
-            </video> */}
-            <div className="mx-auto max-w-3xl text-center text-white">
-              <h1 className="mb-8 text-4xl font-bold">
+          <div className="container relative mx-auto px-4 py-24 w-full">
+            {/* Tuyết rơi */}
+            <div className="absolute rounded-2xl inset-0  pointer-events-none" />
+
+            <ChatBubble />
+            {/* Nội dung */}
+            <div className="relative z-10 mt-8">
+              <h1
+                className="mb-8 text-green-700 text-4xl font-bold text-center"
+                style={{
+                  textShadow:
+                    "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+                }}
+              >
+                🎄 Merry Christmas! 🎁
+              </h1>
+              <h1
+                className="mb-8 text-red-500 text-center text-4xl font-bold"
+                style={{
+                  textShadow:
+                    "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+                }}
+              >
                 The best stock photos, royalty free images & videos shared by
                 creators.
               </h1>
-              <div className="flex rounded-lg bg-white p-1">
-                <Button variant="ghost" className="text-black">
+              <div className="flex w-1/2 m-auto items-center justify-center rounded-lg bg-white p-2 shadow-md">
+                <Button variant="ghost" className="text-red-500">
                   Photos
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
-
                 <Input
-                  className="flex-1 border-0 bg-transparent"
-                  placeholder="Search for free photos"
-                  style={{ color: "black" }}
+                  className="flex-1 border-none focus:no-underline m-auto border-0 bg-transparent text-green-700 text-center"
+                  placeholder="Search for Christmas joy..."
                   onChange={(e) => setKeyword(e.target.value)}
                 />
-                <Button size="sm" className="rounded-md">
+                <Button
+                  size="sm"
+                  className="rounded-md w-24 bg-red-500 text-white"
+                >
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
             </div>
+            {/* video background  */}
+
+            <div className="mx-auto max-w-3xl text-white  p-8 rounded-lg shadow-lg"></div>
           </div>
         </section>
+
         <section className="p-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Stock Photos</h2>

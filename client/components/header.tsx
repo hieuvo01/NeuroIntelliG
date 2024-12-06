@@ -77,6 +77,9 @@ function Header() {
             <a href="#" className="text-gray-600 hover:text-gray-900">
               Explore
             </a>
+            <a href="/test/demo" className="text-gray-600 hover:text-gray-900">
+              Image Analyzing
+            </a>
             <a
               href="/image_of_the_day"
               className="text-gray-600 hover:text-gray-900"

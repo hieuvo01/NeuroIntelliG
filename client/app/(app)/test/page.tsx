@@ -18,10 +18,8 @@ function Test() {
   };
 
   const stopVoiceInput = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setTextInput(
-      (prev: any) =>
-        prev + (transcript.length ? (prev.length ? " " : "") + transcript : "")
+      (prev: any) => prev + (transcript.length ? ` ${transcript}` : "")
     );
     stopListening();
   };

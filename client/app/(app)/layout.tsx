@@ -53,7 +53,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className=" bg-[url('https://c4.wallpaperflare.com/wallpaper/616/569/304/tree-snowflake-new-year-merry-christmas-hd-background-wallpaper-preview.jpg')] bg-cover">
         {!loading && (
           <UserContext.Provider value={user as any}>
             <ThemeProvider

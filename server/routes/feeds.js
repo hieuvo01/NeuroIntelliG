@@ -13,9 +13,9 @@ import axios from "axios";
 dotenv.config();
 
 const customApi = axios.create({
-  baseURL: "https://api.yescale.io/v1", // Thay bằng endpoint đúng của nhà cung cấp khác
+  baseURL: "https://api.yescale.io/v1", // endpoint cua Yescale
   headers: {
-    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // API Key của nhà cung cấp đó
+    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     "Content-Type": "application/json",
   },
 });
@@ -243,6 +243,34 @@ route.post("/analyze-image", upload.single("image"), async (req, res) => {
     console.error("Error analyzing image:", error);
     res.status(500).json({ error: error.message || "Error analyzing image" });
   }
+});
+
+// Route để chatbot trả lời
+route.post("/chatbot", async (req, res) => {
+  const { message } = req.body;
+
+  if (!message) {
+    return res.status(400).json({ error: "Message is required" });
+  }
+
+  try {
+    const response = await customApi.post("/chat/completions", {
+      model: "gpt-4", // Chọn model phù hợp
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: message },
+      ],
+    });
+
+    const chatbotReply = response.data.choices[0].message.content;
+    return res.json({ reply: chatbotReply });
+  } catch (error) {
+    console.error("Error communicating with OpenAI:", error);
+    return res.status(500).json({ error: "Failed to communicate with OpenAI" });
+  }
+});
+route.get("/", (req, res) => {
+  res.send("hello world");
 });
 // route mac dinh
 route.get("/", (req, res) => {
