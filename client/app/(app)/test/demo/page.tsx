@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { LoadingOutlined } from "@ant-design/icons";
+
 import {
   Card,
   CardContent,
@@ -90,7 +92,7 @@ export default function ImageAnalysis() {
                 <img
                   src={preview}
                   alt="Preview"
-                  className="max-w-full h-auto rounded-lg shadow-md"
+                  className="max-w-96 h-auto m-auto rounded-lg shadow-md"
                 />
               </div>
             )}
@@ -101,7 +103,8 @@ export default function ImageAnalysis() {
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <>
-                  <Upload className="mr-2 h-4 w-4 animate-spin" />
+                  <LoadingOutlined />
+                  {/* <Loading className="mr-2 h-4 w-4 animate-spin" /> */}
                   Analyzing...
                 </>
               ) : (

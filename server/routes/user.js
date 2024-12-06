@@ -165,49 +165,62 @@ route.get("/me", async (req, res) => {
 //user settings
 route.put("/update-settings", async (req, res) => {
   try {
-    const { token } = req.query;
-    const result = jwt.decode(token, process.env.JWT_SECRET);
+    const { token } = req.headers; // Nhận token từ headers
+    const decoded = jwt.decode(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const { name, phone_number, avatar } = req.body;
-    if (!name || !phone_number || !avatar) {
+    if (!name || !phone_number) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
     const user = await UserSchema.findByIdAndUpdate(
-      { _id: result._id },
+      { _id: decoded._id },
       { name, phone_number, avatar },
       { new: true }
     );
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.errors });
+    res.status(500).json({ message: error.message });
   }
 });
 
 //doi mat khau
 route.put("/change-password", async (req, res) => {
   try {
-    const { token } = req.query;
-    const result = jwt.decode(token, process.env.JWT_SECRET);
+    const { token } = req.headers; // Nhận token từ headers
+    const decoded = jwt.decode(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const { current_password, new_password } = req.body;
     if (!current_password || !new_password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const user = await AuthSchema.findOne({ user_id: result._id });
-    console.log(user);
-    const validPassword = await bcrypt.compare(current_password, user.password);
+
+    const authUser = await AuthSchema.findOne({ user_id: decoded._id });
+    const validPassword = await bcrypt.compare(
+      current_password,
+      authUser.password
+    );
     if (!validPassword) {
       return res.status(401).json({ message: "Invalid current password" });
     }
+
     const salt = 10;
     const hashedPassword = await bcrypt.hash(new_password, salt);
     await AuthSchema.updateOne(
-      { user_id: result._id },
+      { user_id: decoded._id },
       { password: hashedPassword }
     );
     res.status(200).json({ message: "Password changed successfully!" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.errors });
+    res.status(500).json({ message: error.message });
   }
 });
 

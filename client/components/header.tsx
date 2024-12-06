@@ -52,6 +52,28 @@ function Header() {
     }
     route.push("/feeds");
   };
+
+  const getUserInfo = () => {
+    const token = localStorage.getItem("token"); // Hoặc lấy từ cookie/sessionStorage
+    if (token) {
+      try {
+        const decodedToken: any = jwt_decode(token); // Giải mã token JWT
+        const userName = decodedToken.name; // Lấy tên người dùng
+        const userAvatar = decodedToken.avatar; // Lấy avatar người dùng
+
+        return { name: userName, avatar: userAvatar };
+      } catch (error) {
+        console.error("Invalid token", error);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  // Nếu userToggle có dữ liệu và có ảnh
+  const profileImage =
+    userToggle?.profileImage ||
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuSQ2P7BRcEUOEm8ddb5J1Ml2iHzs-fxLWNg&s"; // Nếu không có, dùng ảnh mặc định
   const userLogout = async () => {
     localStorage.removeItem("token");
     window.location.href = "/";
@@ -133,7 +155,7 @@ function Header() {
                             borderRadius: "50%",
                             marginLeft: "4px",
                           }}
-                          src="https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/341615475_2434267820081587_6490100784537918171_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeFLDi-1jjN-UAhnPBFY3-pcFI7O-5yFcjwUjs77nIVyPF0GHJHnLaOskm8HhJ2DBhzplDXBqnXEt-ouAsJEuUM4&_nc_ohc=0ACiqpHtVYwQ7kNvgFLLDKT&_nc_zt=23&_nc_ht=scontent.fsgn2-8.fna&_nc_gid=AZVjqsaMD9AO6aZ2ew0YsWN&oh=00_AYDmfudElyhpNfrWEuRMiZTEKwjR5IfmgiaMz69nHASzZA&oe=674E3B0D"
+                          src={profileImage}
                           alt="Avatar-border"
                           className="avatar-image"
                         />
@@ -149,18 +171,6 @@ function Header() {
                           className="avatar-frame anim-spin"
                         ></img>
                       </div>
-                      {/* <img
-                        style={{
-                          borderRadius: "25%",
-                          border: "6px solid #419949",
-                          padding: "4px",
-                          width: "4rem",
-                        }}
-                        className="cursor-pointer"
-                        src="https://images.pexels.com/users/avatars/1931010954/2004-_-vo-minh-hi-u-711.jpg?auto=compress&fit=crop&h=30&w=30&dpr=2"
-                        alt=""
-                      /> */}
-                      {/* </Button> */}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56">
                       <DropdownMenuLabel>Hieu Minh</DropdownMenuLabel>
@@ -245,3 +255,6 @@ function Header() {
 }
 
 export default Header;
+function jwt_decode(token: string): any {
+  throw new Error("Function not implemented.");
+}

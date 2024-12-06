@@ -35,6 +35,9 @@ const stickers = [
   "https://cdn-icons-png.flaticon.com/256/5928/5928219.png",
   "https://www.clipartmax.com/png/full/39-398438_stickers-de-facebook-pusheen-super-stationery-set.png",
   "https://www.clipartmax.com/png/full/236-2362066_stickers-de-facebook-pusheen.png",
+  "https://www.clipartmax.com/png/full/255-2550739_facebook-stickers-png-emoticon-enojado-de-facebook.png",
+  "https://www.clipartmax.com/png/full/6-64251_turtles-happiness-history-android-fun-animal-thank-you-for-listening.png",
+  "https://cdn-icons-png.flaticon.com/512/6853/6853040.png",
   // Thêm các sticker khác
 ];
 
@@ -43,11 +46,16 @@ const HomePage = () => {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [currentTime, setCurrentTime] = useState<string>(""); //set current time
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null); //theo doi tin nhan ma bot dang doc
   //tai tin nhan tu localStorage
-  const [chat, setChat] = useState<{ user: string; bot: string }[]>(() =>
-    JSON.parse(localStorage.getItem("chatHistory") || "[]")
-  );
+  const [chat, setChat] = useState<
+    {
+      time: ReactNode;
+      user: string;
+      bot: string;
+    }[]
+  >(() => JSON.parse(localStorage.getItem("chatHistory") || "[]"));
   const [showStickerPicker, setShowStickerPicker] = useState(false); // Dùng để điều khiển việc hiển thị bộ sticker
 
   // Lắng nghe giọng nói
@@ -150,6 +158,19 @@ const HomePage = () => {
     );
   }, [transcript]);
 
+  // Cập nhật thời gian mỗi giây
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, "0"); // Đảm bảo giờ có 2 chữ số
+      const minutes = now.getMinutes().toString().padStart(2, "0"); // Đảm bảo phút có 2 chữ số
+      const formattedTime = `${hours}:${minutes}`;
+      setCurrentTime(formattedTime); // Cập nhật thời gian hiện tại
+    }, 60000); // Cập nhật mỗi phút (60000ms)
+
+    return () => clearInterval(intervalId); // Dọn dẹp khi component unmount
+  }, []);
+
   //xoa chat o localstorage
   const clearChatHistory = () => {
     setChat([]);
@@ -165,13 +186,17 @@ const HomePage = () => {
   const handleSendMessage = async () => {
     if (!message && !image) return;
 
+    // Lấy thời gian hiện tại khi gửi tin nhắn
+    const currentTime = new Date().toLocaleTimeString();
+
     if (image) {
-      setChat([...chat, { user: "Image Sent", bot: "" }]); // Chỉ hiển thị tin nhắn của user
+      setChat([...chat, { user: "Image Sent", bot: "", time: currentTime }]); // Chỉ hiển thị tin nhắn của user
       setImage(null); // Xóa ảnh sau khi gửi
       return;
     }
 
-    const newChat = [...chat, { user: message, bot: "" }];
+    // Lưu tin nhắn với thời gian
+    const newChat = [...chat, { user: message, bot: "", time: currentTime }];
     setChat(newChat);
     setMessage("");
 
@@ -189,7 +214,11 @@ const HomePage = () => {
 
       const data = await response.json();
       const botReply = data.reply || "🩵";
-      setChat([...newChat.slice(0, -1), { user: message, bot: botReply }]);
+      // Cập nhật cả tin nhắn của bot với thời gian
+      setChat([
+        ...newChat.slice(0, -1),
+        { user: message, bot: botReply, time: currentTime },
+      ]);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -219,9 +248,12 @@ const HomePage = () => {
         <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
           {chat.map((entry, index) => (
             <div key={index} className="p-4 space-y-4">
+              <div className="flex justify-center items-center">
+                <span className="text-sm text-gray-600">{entry.time}</span>
+              </div>
+
               {/* Tin nhắn của user */}
               <div className="flex flex-col items-end gap-1 mb-2">
-                <span className="text-sm text-gray-400">12:00</span>
                 {/* Kiểm tra nếu user là một sticker (đối tượng với imgSrc) */}
                 {typeof entry.user === "string" ? (
                   <div className="bg-[#0084FF] bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-3xl px-4 py-2 max-w-[80%]">
