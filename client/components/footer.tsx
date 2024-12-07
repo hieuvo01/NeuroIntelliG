@@ -1,12 +1,14 @@
 import { Facebook, Instagram, Link, Linkedin, Twitter } from "lucide-react";
 import React from "react";
 import { ModeToggle } from "./ui/modetoggle";
+import MusicPlayer from "./ui/MusicPlayer";
 
 function Footer() {
   return (
     <div>
       <footer className="bg-black text-white py-12 px-4">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+          <MusicPlayer />
           <div className="space-y-4">
             <h2 className="text-xl font-bold">
               Free photos and videos shared by talented creators.
@@ -63,6 +65,7 @@ function Footer() {
             </div>
           </div>
 
+          <ModeToggle />
           <div>
             <h3 className="text-lg font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
@@ -128,7 +131,6 @@ function Footer() {
             </svg>
             English
           </button>
-          <ModeToggle />
         </div>
       </footer>
     </div>

@@ -51,6 +51,15 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
       },
+      animation: {
+        fall: "fall linear infinite",
+      },
+      keyframes: {
+        fall: {
+          "0%": { transform: "translateY(-100vh)" },
+          "100%": { transform: "translateY(100vh)" },
+        },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

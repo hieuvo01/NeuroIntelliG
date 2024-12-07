@@ -171,7 +171,15 @@ function HomePage() {
 
         <section className="p-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Stock Photos</h2>
+            <h2
+              className="text-2xl font-bold text-red-500"
+              style={{
+                textShadow:
+                  "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+              }}
+            >
+              Stock Photos
+            </h2>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">Sort ↓</Button>

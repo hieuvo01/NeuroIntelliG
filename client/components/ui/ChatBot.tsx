@@ -1,20 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 "use client";
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import Avatar from "antd/es/avatar/avatar";
-import {
-  Heart,
-  ImageIcon,
-  MoreHorizontal,
-  Phone,
-  Plus,
-  SmilePlus,
-  Sticker,
-  Video,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { Sticker } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Input from "antd/es/input";
 import useSpeechToText from "@/hooks/voice-to-text";
@@ -24,7 +13,7 @@ const messageStyles = cn(
   "scrollbar-track-purple-800 bg-gradient-to-r from-blue-500 to-cyan-400  "
 );
 
-// Thêm các sticker vào mảng
+// mảng chứa các stickers
 const stickers = [
   "https://cdn-icons-png.flaticon.com/128/6028/6028757.png",
   "https://cdn-icons-png.flaticon.com/512/8598/8598377.png",
@@ -38,14 +27,13 @@ const stickers = [
   "https://www.clipartmax.com/png/full/255-2550739_facebook-stickers-png-emoticon-enojado-de-facebook.png",
   "https://www.clipartmax.com/png/full/6-64251_turtles-happiness-history-android-fun-animal-thank-you-for-listening.png",
   "https://cdn-icons-png.flaticon.com/512/6853/6853040.png",
-  // Thêm các sticker khác
 ];
 
 const HomePage = () => {
   const [image, setImage] = useState<File | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); //set tin nhan
   const [currentTime, setCurrentTime] = useState<string>(""); //set current time
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null); //theo doi tin nhan ma bot dang doc
   //tai tin nhan tu localStorage
@@ -55,10 +43,10 @@ const HomePage = () => {
       user: string;
       bot: string;
     }[]
-  >(() => JSON.parse(localStorage.getItem("chatHistory") || "[]"));
+  >(() => JSON.parse(localStorage.getItem("chatHistory") || "[]")); //usestate de get ra lich su chat trong local
   const [showStickerPicker, setShowStickerPicker] = useState(false); // Dùng để điều khiển việc hiển thị bộ sticker
 
-  // Lắng nghe giọng nói
+  // bot lang nghe giong noi
   const { isListening, startListening, stopListening, transcript } =
     useSpeechToText({ continues: true });
 
@@ -118,11 +106,11 @@ const HomePage = () => {
   //  xu ly bot doc va dung
   const handleBotSpeak = (index: number, text: string) => {
     if (speakingIndex === index) {
-      // Nếu đang đọc, thì dừng lại
+      // nếu đang đọc thì dừng lại
       speechSynthesis.cancel();
       setSpeakingIndex(null);
     } else {
-      // Nếu chưa đọc, thì bắt đầu đọc
+      //nếu chưa đọc thì bắt đầu đọc
       speechSynthesis.cancel(); // Dừng bất kỳ giọng nói nào đang chạy
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US"; // Ngôn ngữ, có thể chỉnh thành "vi-VN" cho tiếng Việt

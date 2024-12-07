@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Cloud,
@@ -41,6 +41,7 @@ import {
 import { DropdownMenuShortcut } from "./ui/dropdown-menu";
 import Link from "next/link";
 import AILogoN from "./ui/AILogo";
+import SnowEffect from "./SnowEffect";
 
 function Header() {
   const route = useRouter();
@@ -52,6 +53,14 @@ function Header() {
     }
     route.push("/feeds");
   };
+
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (userToggle) {
+      setIsAdmin(userToggle.role === "admin");
+    }
+  }, [userToggle]);
 
   const getUserInfo = () => {
     const token = localStorage.getItem("token"); // Hoặc lấy từ cookie/sessionStorage
@@ -72,8 +81,8 @@ function Header() {
 
   // Nếu userToggle có dữ liệu và có ảnh
   const profileImage =
-    userToggle?.profileImage ||
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuSQ2P7BRcEUOEm8ddb5J1Ml2iHzs-fxLWNg&s"; // Nếu không có, dùng ảnh mặc định
+    userToggle?.avatar ||
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT44JZXz0BWztRFIXCsN7mAp_oU8W3BbPYbGQ&s"; // Nếu không có, dùng ảnh mặc định
   const userLogout = async () => {
     localStorage.removeItem("token");
     window.location.href = "/";
@@ -81,7 +90,7 @@ function Header() {
   return (
     <div>
       <div className=" bg-white">
-        <header className="flex items-center justify-between p-4 bg-white">
+        <header className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-400 to-cyan-500 ">
           <a href="/">
             <div className="flex items-center space-x-4">
               {/* <div className="w-14 h-10 rounded-3xl bg-emerald-500  flex items-center justify-center">
@@ -89,29 +98,61 @@ function Header() {
               </div> */}
               <div className="h-24 flex flex-col items-center justify-center bg-transparent">
                 <AILogoN className="mb-2" />
-                <span className="text-xl text-blue-800 tracking-widest md:text-lg font-extrabold">
+                <span
+                  className="text-xl text-blue-800 tracking-widest md:text-lg font-extrabold "
+                  style={{
+                    textShadow:
+                      "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+                  }}
+                >
                   NeuroVision
                 </span>
               </div>
             </div>
           </a>
+
           <nav className="hidden md:flex space-x-4">
-            <a href="#" className="text-gray-600 hover:text-gray-900">
+            <a
+              href="#"
+              className=" text-lg font-bold text-pink-700 hover:text-gray-900"
+              style={{
+                textShadow:
+                  "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+              }}
+            >
               Explore
             </a>
-            <a href="/test/demo" className="text-gray-600 hover:text-gray-900">
+            <a
+              href="/test/demo"
+              className="text-lg font-bold text-pink-700 hover:text-gray-900"
+              style={{
+                textShadow:
+                  "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+              }}
+            >
               Image Analyzing
             </a>
             <a
               href="/image_of_the_day"
-              className="text-gray-600 hover:text-gray-900"
+              className="text-lg font-bold text-pink-700 hover:text-gray-900"
+              style={{
+                textShadow:
+                  "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+              }}
             >
               Image of the day
             </a>
             {/* <a href="#" className="text-gray-600 hover:text-gray-900">
               Products
             </a> */}
-            <a href="/about_us" className="text-gray-600 hover:text-gray-900">
+            <a
+              href="/about_us"
+              className="text-lg font-bold text-pink-700 hover:text-gray-900"
+              style={{
+                textShadow:
+                  "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+              }}
+            >
               About us
             </a>
           </nav>
@@ -166,14 +207,16 @@ function Header() {
                             pointerEvents: "none",
                             animation: "spin 20s linear infinite",
                           }}
-                          src="https://i.imgur.com/0aDdQyR.png"
+                          src="https://i.imgur.com/T1lahme.png"
                           alt="Moldura"
                           className="avatar-frame anim-spin"
                         ></img>
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56">
-                      <DropdownMenuLabel>Hieu Minh</DropdownMenuLabel>
+                      <DropdownMenuLabel>
+                        {userToggle?.name || "Guest"}
+                      </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
                         <DropdownMenuItem>
@@ -227,6 +270,13 @@ function Header() {
                         <LifeBuoy />
                         <span>Support</span>
                       </DropdownMenuItem>
+                      {isAdmin && ( // Kiểm tra xem user có phải admin không
+                        <DropdownMenuItem>
+                          <Settings />
+                          <Link href={"/admin/dashboard"}>Admin Panel</Link>
+                          <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem disabled>
                         <Cloud />
                         <span>API</span>
