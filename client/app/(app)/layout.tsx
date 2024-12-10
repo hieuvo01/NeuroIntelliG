@@ -4,6 +4,7 @@
 // import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/header";
+
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/ui/themeprovider";
 import { createContext, useEffect, useState } from "react";

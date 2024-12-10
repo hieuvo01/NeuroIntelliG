@@ -269,6 +269,108 @@ route.post("/chatbot", async (req, res) => {
     return res.status(500).json({ error: "Failed to communicate with OpenAI" });
   }
 });
+
+//quan ly feeds
+route.get("/admin/feeds", async (req, res) => {
+  try {
+    const { token } = req.query;
+    const user = jwt.decode(token, process.env.JWT_SECRET);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const feeds = await FeedsSchema.find().sort({ createdAt: -1 });
+    res.status(200).json({ feeds });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//chinh sua feeds (admin)
+
+// Route để lấy thông tin feed cần chỉnh sửa
+route.get("/admin/feeds/edit/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { token } = req.query;
+    const user = jwt.decode(token, process.env.JWT_SECRET);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Lấy thông tin feed từ database
+    const feed = await FeedsSchema.findById(id);
+    if (!feed) {
+      return res.status(404).json({ message: "Feed not found" });
+    }
+
+    // Trả về dữ liệu feed cho giao diện để chỉnh sửa
+    return res.status(200).json({ feed });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Route để cập nhật thông tin feed (Admin chỉnh sửa feed)
+route.put("/admin/feeds/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { token } = req.query;
+    const user = jwt.decode(token, process.env.JWT_SECRET);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const { title, description, price, type, url } = req.body;
+    if (!title || !description || !price || !type) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const feed = await FeedsSchema.findByIdAndUpdate(id, {
+      title,
+      description,
+      price,
+      type,
+      image: type === "image" ? url : "",
+      video: type === "video" ? url : "",
+      updatedAt: new Date(),
+    });
+
+    if (!feed) {
+      return res.status(404).json({ message: "Feed not found" });
+    }
+
+    return res.status(200).json({ message: "Feed updated successfully", feed });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//xoa feeds (admin)
+route.delete("/admin/feeds/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { token } = req.query;
+    const user = jwt.decode(token, process.env.JWT_SECRET);
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const feed = await FeedsSchema.findByIdAndDelete(id);
+    if (!feed) {
+      return res.status(404).json({ message: "Feed not found" });
+    }
+
+    return res.status(200).json({ message: "Feed deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 route.get("/", (req, res) => {
   res.send("hello world");
 });

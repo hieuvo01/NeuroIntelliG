@@ -29,7 +29,7 @@ export function Sidebar() {
           Back to Homepage
         </Link>
         <Link
-          href="/"
+          href="/admin/earnings"
           className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white"
         >
           <BarChart2 className="inline-block mr-2 h-5 w-5" /> Dashboard

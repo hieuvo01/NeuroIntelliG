@@ -53,7 +53,7 @@ export default function LoginForm() {
     }
   };
   return (
-    <Card className="w-full max-w-md max-h-max min-h-96 mt-8 mx-auto">
+    <Card className="w-full max-w-md mb-8 max-h-max min-h-96 mt-8 mx-auto">
       <CardHeader>
         <CardTitle>Sign In Your Account!</CardTitle>
         {/* <CardDescription>Login</CardDescription> */}

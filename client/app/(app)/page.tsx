@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import ChatBubble from "./chatbot/page";
+import Head from "next/head";
 
 function HomePage() {
   const route = useRouter();

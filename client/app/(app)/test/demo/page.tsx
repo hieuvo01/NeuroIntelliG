@@ -30,6 +30,7 @@ export default function ImageAnalysis() {
     }
   };
 
+  //ham submit hinh anh va xu ly
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -39,6 +40,7 @@ export default function ImageAnalysis() {
     const formData = new FormData();
     formData.append("image", image);
 
+    //fetch den server
     try {
       const response = await fetch(
         `${process.env.HTTP_URL}/api/feeds/analyze-image`,

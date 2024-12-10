@@ -255,6 +255,7 @@ route.get("/otp-verification-by-url", async (req, res) => {
   }
 });
 
+//admin functions =================================================================
 route.get("/admin/search", async (req, res) => {
   try {
     const { token } = req.query;
@@ -337,10 +338,11 @@ route.post("/admin/create", async (req, res) => {
 
 route.put("/admin/update/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; //get id tu param
     const { token } = req.query;
-    const result = jwt.decode(token, process.env.JWT_SECRET);
+    const result = jwt.decode(token, process.env.JWT_SECRET); //giai ma token
     if (result.role !== "admin") {
+      //kiem tra role admin
       return res.status(401).json({ message: "Unauthorized" });
     }
     const { name, phone_number } = req.body;
