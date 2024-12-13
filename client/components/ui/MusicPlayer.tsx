@@ -30,7 +30,7 @@ const MusicPlayer: React.FC = () => {
   return (
     <div className="text-center">
       {/* Audio element */}
-      <audio ref={audioRef} src="/music/music4.mp3" loop autoPlay />
+      <audio ref={audioRef} src="/music/music5.mp3" loop autoPlay />
 
       {/* Custom controls */}
       <div className="flex justify-center mt-4 space-x-4">

@@ -12,7 +12,6 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../layout";
 import axios from "axios";
 import { LoadingOutlined } from "@ant-design/icons";
-import AdminTable from "@/components/ui/admin/table_admin";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
 
@@ -22,6 +21,10 @@ export default function Admin_Users() {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<any[]>([]);
   const route = useRouter();
+
+  const handleCreateUser = async () => {
+    route.push("/admin/users/create");
+  };
 
   const handleEditUser = async (id: string) => {
     route.push(`/admin/users/update/${id}`);
@@ -76,78 +79,116 @@ export default function Admin_Users() {
     }
     getUSers();
   }, [isAdmin]);
-  const column = [
-    {
-      title: "User name",
-      dataIndex: "username",
-      key: "name",
-    },
-    {
-      title: "Email address",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Phone number",
-      dataIndex: "phone_number",
-      key: "phone",
-    },
-    {
-      title: "Verify status",
-      dataIndex: "isVerified",
-      key: "verifyStatus",
-      render: (isVerified: boolean) => {
-        switch (isVerified) {
-          case true:
-            return <span className="text-green-500">Verified</span>;
-          case false:
-            return <span className="text-red-500">Not verified</span>;
-          default:
-            return <span>Unknown</span>;
-        }
-      },
-    },
-    {
-      title: "Options",
-      dataIndex: "_id",
-      key: "options",
-      render: (_id: string) => {
-        return (
-          <div className="flex space-x-2">
-            <button
-              className="text-sm text-blue-500 hover:text-blue-700"
-              onClick={() => {
-                handleEditUser(_id);
-              }}
-            >
-              Edit
-            </button>
-            <button
-              className="text-sm text-red-500 hover:text-red-700"
-              onClick={() => {
-                handleDeleteUser(_id);
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        );
-      },
-    },
-  ];
+
   //   console.log(users);
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen  bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* <Header /> */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          {isLoading && !users ? (
+          {isLoading && !users.length ? (
             <div className="flex justify-center items-center h-screen">
               <LoadingOutlined />
             </div>
           ) : (
-            <AdminTable dataSource={users} column={column} />
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+              {/* Users Table */}
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="p-4">
+                      <div className="flex items-center">
+                        <input
+                          id="checkbox-all-search"
+                          type="checkbox"
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                      </div>
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      User Name
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Name
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Email Address
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Phone Number
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Verify Status
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Action
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      <button
+                        type="button"
+                        onClick={handleCreateUser}
+                        className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 me-2 mb-2"
+                      >
+                        Create New
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr
+                      key={user._id}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      <td className="w-4 p-4">
+                        <div className="flex items-center">
+                          <input
+                            id={`checkbox-table-search-${user._id}`}
+                            type="checkbox"
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                          />
+                        </div>
+                      </td>
+                      <th
+                        scope="row"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      >
+                        {user.username}
+                      </th>
+                      <td className="px-6 py-4">{user.name}</td>
+                      <td className="px-6 py-4">{user.email}</td>
+                      <td className="px-6 py-4">{user.phone_number}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={
+                            user.isVerified ? "text-green-500" : "text-red-500"
+                          }
+                        >
+                          {user.isVerified ? "Verified" : "Not verified"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex space-x-2">
+                          <button
+                            className="text-sm text-blue-500 hover:text-blue-700"
+                            onClick={() => handleEditUser(user._id)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="text-sm text-red-500 hover:text-red-700"
+                            onClick={() => handleDeleteUser(user._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4"></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </main>
       </div>

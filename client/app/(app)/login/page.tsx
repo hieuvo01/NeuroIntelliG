@@ -48,7 +48,9 @@ export default function LoginForm() {
     } catch (error) {
       setLoading(false);
       const e = await error;
-      await toast.error(`Error while signing up: Invalid username or password`);
+      await toast.error(
+        `Error while signing up: \n Invalid credentials or your account has not been verified`
+      );
       console.error(e);
     }
   };

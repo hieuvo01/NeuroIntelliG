@@ -274,11 +274,11 @@ route.get("/admin/search", async (req, res) => {
 
 route.post("/admin/create", async (req, res) => {
   try {
-    const { token } = req.query;
-    const result = jwt.decode(token, process.env.JWT_SECRET);
-    if (result.role !== "admin") {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const { token } = req.query;
+    // const result = jwt.decode(token, process.env.JWT_SECRET);
+    // if (result.role !== "admin") {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     const salt = 10;
     const payload = req.body; // lay thong tin tu cac truong trong PostMan
     if (
@@ -345,13 +345,13 @@ route.put("/admin/update/:id", async (req, res) => {
       //kiem tra role admin
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const { name, phone_number } = req.body;
-    if (!name || !phone_number) {
+    const { name, phone_number, username, email } = req.body;
+    if (!name || !phone_number || !username || !email) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const user = await UserSchema.findByIdAndUpdate(
       { _id: id },
-      { name, phone_number },
+      { name, phone_number, email, username },
       { new: true }
     );
     res.status(200).json(user);

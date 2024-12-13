@@ -19,7 +19,7 @@ export default function LoginForm() {
   // const router = useRouter();
 
   return (
-    <Card className="w-full max-w-md max-h-max min-h-96 mt-8 mx-auto">
+    <Card className="w-full mb-16 max-w-md max-h-max min-h-96 mt-8 mx-auto">
       <CardHeader>
         <CardTitle>
           We have sent you a verification mail to your mailbox

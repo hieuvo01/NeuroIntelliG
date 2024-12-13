@@ -14,7 +14,7 @@ export function Dashboard() {
             <Brain className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">3</div>
             <p className="text-xs text-muted-foreground">+2 from last month</p>
           </CardContent>
         </Card>
@@ -24,7 +24,7 @@ export function Dashboard() {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">3</div>
             <p className="text-xs text-muted-foreground">+4 new this quarter</p>
           </CardContent>
         </Card>
@@ -60,10 +60,9 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              <li>Neural Interface Alpha</li>
-              <li>Cognitive Enhancement Beta</li>
-              <li>BrainWave Analyzer</li>
-              <li>NeuroFeedback System</li>
+              <li>[HUTECH] - (Nov, 2022) iMessages</li>
+              <li>[HUTECH] - (Feb, 2024) iMovies</li>
+              <li>[HUTECH] - (Nov, 2024) NeuroVision</li>
             </ul>
           </CardContent>
         </Card>
@@ -73,7 +72,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              <li>Dr. Emily Chen joined as Lead Neuroscientist</li>
+              <li>Mr. Vo Minh Hieu joined as Lead Neuroscientist</li>
               <li>AI team completed deep learning model for EEG analysis</li>
               <li>Hardware team finalized prototype for new neural implant</li>
               <li>

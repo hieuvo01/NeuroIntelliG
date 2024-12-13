@@ -6,7 +6,7 @@ import { Button, Input, message } from "antd";
 import { Label } from "@radix-ui/react-dropdown-menu";
 
 const AdminEditFeed = () => {
-  const [isClient, setIsClient] = useState(false); // Thêm trạng thái để kiểm tra phía client
+  const [isClient, setIsClient] = useState(false);
   const [feedData, setFeedData] = useState({
     title: "",
     description: "",
@@ -15,11 +15,10 @@ const AdminEditFeed = () => {
     url: "",
   });
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // sử dụng useRouter bên trong client-side
+  const router = useRouter(); //
 
-  // Chỉ gán router sau khi component đã được mount
   useEffect(() => {
-    setIsClient(true); // Set client-side rendering khi component mount
+    setIsClient(true);
   }, []);
 
   const { id } = router.query;
@@ -40,7 +39,7 @@ const AdminEditFeed = () => {
 
       fetchFeed();
     }
-  }, [id]); // Chỉ chạy lại khi id thay đổi
+  }, [id]); // chỉ chạy lại khi id thay đổi
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,7 +65,6 @@ const AdminEditFeed = () => {
     }
   };
 
-  // Nếu chưa mount trên client, hiển thị loading hoặc thông báo
   if (!isClient) {
     return <div>Loading...</div>;
   }

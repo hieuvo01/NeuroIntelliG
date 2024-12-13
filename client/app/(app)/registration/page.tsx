@@ -16,7 +16,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { useRouter } from "next/navigation";
-import Head from "next/head";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({

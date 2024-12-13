@@ -1,87 +1,54 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import axios from "axios";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { useRouter } from "next/navigation";
-import { UserContext } from "@/app/(app)/layout";
-
-export default function AdminCreateUser() {
-  const currentUser = useContext(UserContext) as any;
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [users, setUsers] = useState<any[]>([]);
-
+export default function AdminCreateUserForm() {
   const [formData, setFormData] = useState({
     username: "",
     name: "",
     email: "",
     phone_number: "",
     password: "",
+    isVerified: false,
   });
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    if (currentUser) {
-      setIsAdmin(currentUser.role === "admin");
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (isAdmin !== null) {
-      if (!isAdmin) {
-        window.history.back();
-        return;
-      }
-    }
-  }, [isAdmin]);
-
-  const getUSers = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      setIsLoading(true);
-      const response = await axios.get(
-        `${process.env.HTTP_URL}/api/users/admin/search?token=${token}`
-      );
-      const data = await response;
-      setUsers(data.data?.data);
-      //   console.log(data.data?.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
-    getUSers();
-
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, isVerified: e.target.checked });
   };
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.username.trim()) newErrors.username = "Username is required";
-    if (!formData.name.trim()) newErrors.fullname = "Full name is required";
+    if (!formData.name.trim()) newErrors.name = "Full name is required";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "Invalid email address";
 
-    // Vietnam phone number validation (allows +84 or 0 prefix)
     const phoneRegex =
       /^(\+84|0)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-9])[0-9]{7}$/;
     if (!phoneRegex.test(formData.phone_number))
@@ -97,7 +64,6 @@ export default function AdminCreateUser() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      //tien hanh xu li API
       try {
         setLoading(true);
         await axios({
@@ -109,10 +75,11 @@ export default function AdminCreateUser() {
             email: formData.email,
             phone_number: formData.phone_number,
             password: formData.password,
+            isVerified: formData.isVerified, // thay doi quyen admin cho user :>
           },
-        }).then(async (res) => {
+        }).then(() => {
           console.log("Form submitted:", formData);
-          await toast("Signed Up Successfully!", {
+          toast("Successfully created! [VERIFICATION REQUIRED]", {
             position: "bottom-right",
             autoClose: 2000,
           });
@@ -122,22 +89,26 @@ export default function AdminCreateUser() {
             email: "",
             phone_number: "",
             password: "",
+            isVerified: false,
           });
           setTimeout(() => {
-            router.push("/mail_pending");
+            router.push("/admin/users");
           }, 2000);
-          return res.data;
         });
       } catch (error) {
         setLoading(false);
-        const e = await error;
-        await toast.error(`Error while registering: ${e}`);
+        toast.error("Error while creating user");
+        console.log(error);
       }
     }
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8">
+    <Card className="w-full max-w-md mx-auto my-8">
+      <CardHeader>
+        <CardTitle>Create a New User</CardTitle>
+        <CardDescription>Admin creates a new user account</CardDescription>
+      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -192,10 +163,6 @@ export default function AdminCreateUser() {
             {errors.phone_number && (
               <p className="text-sm text-red-500">{errors.phone_number}</p>
             )}
-            <span className="font-mono text-xs">
-              We are currently supporting Vietnam phone number only! sorry for
-              inconvenience!
-            </span>
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
@@ -205,35 +172,24 @@ export default function AdminCreateUser() {
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="********"
+              placeholder="****"
             />
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Repeat password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="********"
+            <Label htmlFor="isVerified">User Verified</Label>
+            <input
+              type="checkbox"
+              name="isVerified"
+              checked={formData.isVerified}
+              onChange={handleCheckboxChange}
             />
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
-          <div className="font-mono text-sm">
-            Already have an account? You can
-            <a href="/login" className="ml-1 mr-1 text-teal-200">
-              Sign in
-            </a>
-            here
+            <p className="text-sm text-gray-600">Mark if user is verified</p>
           </div>
           <Button disabled={loading} type="submit" className="w-full">
-            Sign Up
+            Create User
           </Button>
         </form>
       </CardContent>
