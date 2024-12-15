@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
@@ -13,31 +14,38 @@ import { Input } from "@/components/ui/input";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Sử dụng router để chuyển hướng
 
 export default function UserSettings() {
   function ProfileEdit() {
-    // useState để đổi mật khẩu
     const [password, setPassword] = useState("");
-    // useState(s) để thay đổi thông tin người dùng
+
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone_number, setPhoneNumber] = useState("");
+    const router = useRouter(); // Để chuyển hướng nếu token không hợp lệ
+    const [avatar, setAvatar] = useState("");
+    const [user, setUser] = useState(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleSubmit = async (e: any) => {
       e.preventDefault();
 
-      const token = localStorage.getItem("token"); // Lấy token từ localStorage hoặc context
-      if (!token) {
-        toast.error("No token found!");
-        return;
-      }
-
       try {
+        const token = localStorage.getItem("token"); // Lấy token từ localStorage
+        if (!token) {
+          toast.error("No token found! Please log in.");
+          router.push("/login"); // Chuyển hướng nếu không có token
+          return;
+        }
+
         const response = await axios.put(
-          "/api/users/update-settings",
+          `${process.env.HTTP_URL}/api/users/update-settings`,
           {
             name,
             email,
@@ -49,39 +57,106 @@ export default function UserSettings() {
             },
           }
         );
-        toast.success("User updated successfully!");
+        toast.success("Updated successfully, please re-sign in to continue!");
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
         console.log("User updated:", response.data);
-      } catch (error) {
-        toast.error("Error updating user");
-        console.error("Error updating user:", error);
+      } catch (error: any) {
+        console.error("Error updating user:", error.response || error.message);
+        if (error.response?.status === 401) {
+          toast.error("Unauthorized! Please log in again.");
+          router.push("/login");
+        } else {
+          toast.error("Error updating user.");
+        }
       }
     };
 
-    const handleChangePassword = async () => {
-      const token = localStorage.getItem("token"); // Lấy token từ localStorage hoặc context
-      if (!token) {
-        toast.error("No token found!");
+    const handleUploadAvatar = async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById("myfile");
+      const file = fileInput.files[0];
+      if (!file) {
+        toast.error("Please select an avatar first!");
         return;
       }
 
+      const formData = new FormData();
+      formData.append("avatar", file);
+
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("Unauthorized! Please log in.");
+          router.push("/login");
+          return;
+        }
+
+        const response = await axios.put(
+          `${process.env.HTTP_URL}/api/users/update-avatar`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        toast.success("Avatar updated successfully!");
+        setAvatar(response.data.avatar); // Cập nhật avatar mới trong giao diện
+      } catch (error) {
+        toast.error("Failed to update avatar. Please try again.");
+      }
+    };
+
+    const handleChangePassword = async (e: any) => {
+      e.preventDefault(); // Ngăn trình duyệt reload
+
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("No token found! Please log in.");
+          router.push("/login");
+          return;
+        }
+
+        if (!currentPassword || !newPassword) {
+          return toast.error("Both current and new passwords are required.");
+        }
+        if (currentPassword === newPassword) {
+          return toast.error(
+            "New password must be different from current password."
+          );
+        }
+
         const response = await axios.put(
           `${process.env.HTTP_URL}/api/users/change-password`,
-          {
-            current_password: "current_password",
-            new_password: "new_password",
-          },
+          { current_password: currentPassword, new_password: newPassword },
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+
         toast.success("Password changed successfully!");
-        console.log("Password changed:", response.data);
-      } catch (error) {
-        toast.error("Error changing password");
-        console.error("Error changing password:", error);
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
+      } catch (error: any) {
+        console.error(
+          "Error changing password:",
+          error.response || error.message
+        );
+        if (error.response?.status === 401) {
+          toast.error("Unauthorized! Please log in again.");
+          router.push("/login");
+        } else {
+          toast.error("Error changing password.");
+        }
       }
     };
 
@@ -90,6 +165,8 @@ export default function UserSettings() {
         <div className="mx-auto max-w-3xl text-center text-white"></div>
         <div className="px-4 py-12 sm:px-6 lg:px-8 mt-10">
           <div className="mx-auto flex justify-around space-y-8">
+            <ToastContainer closeOnClick theme="dark" />
+
             <Card className="w-full max-w-md">
               <CardHeader>
                 <CardTitle className="text-lg">Profile</CardTitle>
@@ -111,7 +188,7 @@ export default function UserSettings() {
                   <div className="grid gap-2">
                     <Label htmlFor="phone">Phone</Label>
                     <Input
-                      id="phone"
+                      id="phone_number"
                       placeholder="Enter your phone number"
                       value={phone_number}
                       onChange={(e) => setPhoneNumber(e.target.value)}
@@ -164,28 +241,32 @@ export default function UserSettings() {
                 <CardDescription>Update your password.</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input
-                    id="current-password"
-                    placeholder="Enter your current password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input
-                    id="new-password"
-                    placeholder="Enter your new password"
-                    type="password"
-                  />
-                </div>
+                <form onSubmit={handleChangePassword}>
+                  <div className="grid gap-2">
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <Input
+                      id="current-password"
+                      placeholder="Enter your current password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      placeholder="Enter your new password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+                  <CardFooter className="flex justify-end">
+                    <Button type="submit">Save</Button>
+                  </CardFooter>
+                </form>
               </CardContent>
-              <CardFooter className="flex justify-end">
-                <Button onClick={handleChangePassword}>Save</Button>
-              </CardFooter>
             </Card>
           </div>
         </div>

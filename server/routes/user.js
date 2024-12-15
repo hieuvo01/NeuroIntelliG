@@ -162,47 +162,88 @@ route.get("/me", async (req, res) => {
   }
 });
 
-//user settings
+// user settings
 route.put("/update-settings", async (req, res) => {
   try {
-    const { token } = req.headers; // Nhận token từ headers
-    const decoded = jwt.decode(token, process.env.JWT_SECRET);
+    // lấy token từ header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: Token is required" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Xác minh token
     if (!decoded) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
 
     const { name, phone_number, avatar } = req.body;
+
+    // check thong tin
     if (!name || !phone_number) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ message: "Name and phone number are required" });
     }
 
+    // cap nhat thong tin user
     const user = await UserSchema.findByIdAndUpdate(
-      { _id: decoded._id },
+      decoded._id,
       { name, phone_number, avatar },
       { new: true }
     );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 //doi mat khau
+
 route.put("/change-password", async (req, res) => {
   try {
-    const { token } = req.headers; // Nhận token từ headers
-    const decoded = jwt.decode(token, process.env.JWT_SECRET);
+    // Lấy token từ header Authorization
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: Token is required" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Xác minh token
     if (!decoded) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
 
     const { current_password, new_password } = req.body;
+
+    // check thong tin
     if (!current_password || !new_password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ message: "Both current and new passwords are required" });
+    }
+    if (current_password === new_password) {
+      return res.status(400).json({
+        message: "New password must be different from current password",
+      });
     }
 
     const authUser = await AuthSchema.findOne({ user_id: decoded._id });
+    if (!authUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // check current password
     const validPassword = await bcrypt.compare(
       current_password,
       authUser.password
@@ -211,16 +252,18 @@ route.put("/change-password", async (req, res) => {
       return res.status(401).json({ message: "Invalid current password" });
     }
 
+    // ma hoa mat khau moi
     const salt = 10;
     const hashedPassword = await bcrypt.hash(new_password, salt);
     await AuthSchema.updateOne(
       { user_id: decoded._id },
       { password: hashedPassword }
     );
+
     res.status(200).json({ message: "Password changed successfully!" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

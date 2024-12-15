@@ -79,6 +79,10 @@ function Header() {
     return null;
   };
 
+  const handleUserSettings = async () => {
+    route.push(`/settings`);
+  };
+
   // Nếu userToggle có dữ liệu và có ảnh
   const profileImage =
     userToggle?.avatar ||
@@ -235,7 +239,12 @@ function Header() {
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Settings />
-                          <Link href={"/settings"}>Settings</Link>
+                          <span
+                            className="cursor-pointer"
+                            onClick={handleUserSettings}
+                          >
+                            Settings
+                          </span>
                           <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>

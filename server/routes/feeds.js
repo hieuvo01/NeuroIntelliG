@@ -190,11 +190,11 @@ route.get("/:id/details", async (req, res, next) => {
   }
 });
 
-// Gửi yêu cầu đến endpoint tùy chỉnh
+// gửi yêu cầu đến endpoint tùy chỉnh
 async function analyzeTextWithCustomAPI(text) {
   try {
     const response = await customApi.post("/chat/completions", {
-      model: "gpt-4", // Tùy thuộc vào nhà cung cấp khác
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
@@ -255,7 +255,7 @@ route.post("/chatbot", async (req, res) => {
 
   try {
     const response = await customApi.post("/chat/completions", {
-      model: "gpt-4", // Chọn model phù hợp
+      model: "gpt-4o", // Chọn model phù hợp
       messages: [
         { role: "system", content: "You are a helpful assistant." },
         { role: "user", content: message },
@@ -371,9 +371,6 @@ route.delete("/admin/feeds/:id", async (req, res) => {
   }
 });
 
-route.get("/", (req, res) => {
-  res.send("hello world");
-});
 // route mac dinh
 route.get("/", (req, res) => {
   res.send("hello world");
