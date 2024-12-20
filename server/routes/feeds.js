@@ -270,6 +270,26 @@ route.post("/chatbot", async (req, res) => {
   }
 });
 
+route.post("/chat", async (req, res) => {
+  const { message, persona } = req.body;
+  const prompt = `${persona}: ${message}`;
+
+  try {
+    const response = await customApi.post("/chat/completions", {
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: persona },
+        { role: "user", content: message },
+      ],
+      max_tokens: 150,
+    });
+
+    res.json({ reply: response.data.choices[0].message.content });
+  } catch (error) {
+    res.status(500).json({ error: "Error communicating with AI" });
+  }
+});
+
 //quan ly feeds
 route.get("/admin/feeds", async (req, res) => {
   try {
