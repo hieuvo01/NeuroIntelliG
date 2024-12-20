@@ -146,12 +146,11 @@ const HomePage = () => {
     );
   }, [transcript]);
 
-  // Cập nhật thời gian mỗi giây
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date();
-      const hours = now.getHours().toString().padStart(2, "0"); // Đảm bảo giờ có 2 chữ số
-      const minutes = now.getMinutes().toString().padStart(2, "0"); // Đảm bảo phút có 2 chữ số
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
       const formattedTime = `${hours}:${minutes}`;
       setCurrentTime(formattedTime); // Cập nhật thời gian hiện tại
     }, 60000); // Cập nhật mỗi phút (60000ms)

@@ -12,7 +12,6 @@ const ChatBubble = () => {
 
   return (
     <div>
-      {/* Chat Bubble (Nút nhỏ ở góc phải) */}
       {!isOpen && (
         <button
           onClick={toggleChat}
@@ -22,7 +21,6 @@ const ChatBubble = () => {
         </button>
       )}
 
-      {/* Chat Window (Bung giao diện chatbot) */}
       {isOpen && (
         <div className="z-30 font-bold fixed right-5 mt-7 bg-white w-[485px] h-[485px] rounded-lg shadow-lg flex flex-col">
           {/* Header */}

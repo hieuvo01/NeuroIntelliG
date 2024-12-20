@@ -159,6 +159,16 @@ function Header() {
             >
               About us
             </a>
+            <a
+              href="/chatbot/characterai"
+              className="text-lg font-bold text-pink-700 hover:text-gray-900"
+              style={{
+                textShadow:
+                  "2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff",
+              }}
+            >
+              AI Chat
+            </a>
           </nav>
 
           <div className="flex items-center space-x-4">
